@@ -23,6 +23,7 @@ library
       Libkst.IO
       Libkst.Hash
       Libkst.Monad
+      Libkst.Parse
   build-depends:
       base               >=4.10 && <4.15
     , bytestring        ^>=0.10

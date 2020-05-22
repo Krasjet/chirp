@@ -22,12 +22,18 @@ library
   exposed-modules:
       Libkst.IO
       Libkst.Hash
+      Libkst.Monad
   build-depends:
       base               >=4.10 && <4.15
-    , text              ^>=1.2
     , bytestring        ^>=0.10
     , base64-bytestring  >=1.0 && <1.2
     , cryptohash-sha256 ^>=0.11
+    , deepseq           ^>=1.4
+    , directory         ^>=1.3
+    , filepath          ^>=1.4
+    , process           ^>=1.6
+    , text              ^>=1.2
+    , transformers      ^>=0.5
 
 test-suite libkst-test
   hs-source-dirs:      test
@@ -41,3 +47,5 @@ test-suite libkst-test
     , tasty             ^>=1.2
     , tasty-hspec       ^>=1.1
     , text              ^>=1.2
+    , directory         ^>=1.3
+    , filepath          ^>=1.4

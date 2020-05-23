@@ -7,7 +7,8 @@ module Libkst.IO (
   -- * ProcessIO
   readProcessWithCWD,
   -- * Utility
-  tryIO,
+  tryIODeep,
+  evaluateDeep,
 ) where
 
 import qualified Data.Text         as T
@@ -73,14 +74,16 @@ readProcessWithCWD cwd cmd args = Proc.readCreateProcessWithExitCode
   ((Proc.proc cmd args) { Proc.cwd = Just cwd }) ""
   --                                             ^ no stdin
 
--- | Catch 'IOException's and convert them to the 'ExceptT' monad
-tryIO
+-- | Deep evaluate an action, catch any 'IOException's and convert them to the
+-- 'ExceptT' monad
+tryIODeep
   :: (MonadIO m, NFData a)
-  => IO a                      -- ^ IO action.
+  => IO a                    -- ^ IO action.
   -> ExceptT IOException m a -- ^ Result encapsulated in exception
-tryIO action = ExceptT $ liftIO $ try $ evaluateDeep action
-  where
-    evaluateDeep :: NFData a => IO a -> IO a
-    evaluateDeep act = do
-      res <- act
-      evaluate $!! res
+tryIODeep = ExceptT . liftIO . try . evaluateDeep
+
+-- | Deep evaluate an IO action, from safe-exceptions
+evaluateDeep :: NFData a => IO a -> IO a
+evaluateDeep action = do
+  res <- action
+  evaluate $!! res

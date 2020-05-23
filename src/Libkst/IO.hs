@@ -10,7 +10,6 @@ module Libkst.IO (
   tryIO,
 ) where
 
-import qualified Control.Exception as E
 import qualified Data.Text         as T
 import qualified Data.Text.IO      as TIO
 import qualified Data.Text.Lazy    as LT
@@ -18,6 +17,7 @@ import qualified Data.Text.Lazy.IO as LTIO
 import qualified System.Process    as Proc
 
 import Control.DeepSeq            (NFData, ($!!))
+import Control.Exception          (IOException, evaluate, try)
 import Control.Monad.IO.Class     (MonadIO, liftIO)
 import Control.Monad.Trans.Except (ExceptT (..))
 import System.Directory           (createDirectoryIfMissing)
@@ -77,10 +77,10 @@ readProcessWithCWD cwd cmd args = Proc.readCreateProcessWithExitCode
 tryIO
   :: (MonadIO m, NFData a)
   => IO a                      -- ^ IO action.
-  -> ExceptT E.IOException m a -- ^ Result encapsulated in exception
-tryIO action = ExceptT $ liftIO $ E.try $ evaluateDeep action
+  -> ExceptT IOException m a -- ^ Result encapsulated in exception
+tryIO action = ExceptT $ liftIO $ try $ evaluateDeep action
   where
     evaluateDeep :: NFData a => IO a -> IO a
     evaluateDeep act = do
       res <- act
-      E.evaluate $!! res
+      evaluate $!! res

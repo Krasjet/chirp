@@ -1,5 +1,6 @@
 module Libkst.Monad (
-  whenM
+  whenM,
+  eitherToMaybe,
 ) where
 
 import Control.Monad (when)
@@ -11,3 +12,10 @@ whenM
   -> m ()    -- ^ Action
   -> m ()
 whenM condm action = condm >>= flip when action
+
+-- | Either to maybe
+eitherToMaybe
+  :: Either e a
+  -> Maybe a
+eitherToMaybe (Left _)  = Nothing
+eitherToMaybe (Right x) = Just x

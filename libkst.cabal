@@ -22,6 +22,8 @@ library
   exposed-modules:
       Libkst.IO
       Libkst.Hash
+      Libkst.Encode
+      Libkst.Html
       Libkst.Monad
       Libkst.Text.Parse
   build-depends:

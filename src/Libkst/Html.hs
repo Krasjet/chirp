@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Libkst.Html (
+  SVG,
   encodeSVG,
 ) where
 

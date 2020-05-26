@@ -1,19 +1,22 @@
+{-# LANGUAGE FlexibleContexts  #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Main where
 
-import qualified Data.Text      as T
-import qualified Data.Text.IO      as TIO
-import qualified Data.Text.Lazy as LT
-import qualified Test.Tasty as T
+import qualified Data.Attoparsec.Text as A
+import qualified Data.Text            as T
+import qualified Data.Text.IO         as TIO
+import qualified Data.Text.Lazy       as LT
+import qualified Test.Tasty           as T
 
 import Libkst.Hash
 import Libkst.IO
 import Libkst.Monad
+import Libkst.Text.Attoparsec
 import Libkst.Text.Parse
 
+import Control.Exception      (bracket_)
 import Control.Monad.IO.Class (liftIO)
-import Control.Exception (bracket_)
 import System.Directory
 import System.FilePath
 import Test.Tasty
@@ -221,17 +224,48 @@ ioSpec2 = around_ withTestDir $
       -- no dir after test
       testDir `shouldNotContainFile` tmpDir
 
+-- * Attoparsec
+
+attoSpec :: Spec
+attoSpec = parallel $
+  describe "double'" $ do
+    it "parses unsigned numbers correctly" $ do
+      A.parseOnly double' "0" `shouldBe` Right 0
+      A.parseOnly double' "0.1" `shouldBe` Right 0.1
+      A.parseOnly double' ".1" `shouldBe` Right 0.1
+      A.parseOnly double' "1" `shouldBe` Right 1
+      A.parseOnly double' "1.0" `shouldBe` Right 1
+      A.parseOnly double' "12345.54321" `shouldBe` Right 12345.54321
+
+    it "parses positive numbers correctly" $ do
+      A.parseOnly double' "+0" `shouldBe` Right 0
+      A.parseOnly double' "+0.1" `shouldBe` Right 0.1
+      A.parseOnly double' "+.1" `shouldBe` Right 0.1
+      A.parseOnly double' "+1" `shouldBe` Right 1
+      A.parseOnly double' "+1.0" `shouldBe` Right 1
+      A.parseOnly double' "+12345.54321" `shouldBe` Right 12345.54321
+
+    it "parses negative numbers correctly" $ do
+      A.parseOnly double' "-0" `shouldBe` Right 0
+      A.parseOnly double' "-0.1" `shouldBe` Right (-0.1)
+      A.parseOnly double' "-.1" `shouldBe` Right (-0.1)
+      A.parseOnly double' "-1" `shouldBe` Right (-1)
+      A.parseOnly double' "-1.0" `shouldBe` Right (-1)
+      A.parseOnly double' "-12345.54321" `shouldBe` Right (-12345.54321)
+
 
 
 main :: IO ()
 main = do
   testHash <- testSpec "Hashing" hashSpec
   testParse <- testSpec "Parsing" parseSpec
+  testAtto <- testSpec "Attoparsec" attoSpec
   testIO1 <- testSpec "IO1" ioSpec1
   testIO2 <- testSpec "IO2" ioSpec2
   defaultMain $ testGroup "Tests"
     [ testHash
     , testParse
+    , testAtto
     , testIO1
     , T.after AllFinish "IO1" testIO2 -- can't be run in parallel, TODO switch to MVar instead
     ]

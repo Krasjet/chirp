@@ -21,7 +21,7 @@ import System.Directory
 import System.FilePath
 import Test.Tasty
 import Test.Tasty.Hspec
-
+import Test.Hspec.Attoparsec
 
 -- * Utility functions
 
@@ -227,7 +227,7 @@ ioSpec2 = around_ withTestDir $
 -- * Attoparsec
 
 attoSpec :: Spec
-attoSpec = parallel $
+attoSpec = parallel $ do
   describe "double'" $ do
     it "parses unsigned numbers correctly" $ do
       A.parseOnly double' "0" `shouldBe` Right 0
@@ -252,8 +252,18 @@ attoSpec = parallel $
       A.parseOnly double' "-1" `shouldBe` Right (-1)
       A.parseOnly double' "-1.0" `shouldBe` Right (-1)
       A.parseOnly double' "-12345.54321" `shouldBe` Right (-12345.54321)
+  describe "lexeme" $
+    it "skips space after p" $ do
+      T.pack "test" ~> A.string "test" `shouldParse` "test"
+      T.pack "test  " ~> A.string "test" `shouldParse` "test"
+      T.pack "test  " ~?> A.string "test" `leavesUnconsumed` "  "
+      -- not completely comsumed here
+      T.pack "test" ~?> A.string "test" `leavesUnconsumed` ""
 
-
+      T.pack "test  " ~> lexeme (A.string "test") `shouldParse` "test"
+      T.pack "test" ~> lexeme (A.string "test") `shouldParse` "test"
+      leftover (T.pack "test  " ~?> lexeme (A.string "test")) `shouldBe` Nothing
+      leftover (T.pack "test" ~?> lexeme (A.string "test")) `shouldBe` Nothing
 
 main :: IO ()
 main = do

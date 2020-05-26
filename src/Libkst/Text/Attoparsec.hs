@@ -2,6 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Libkst.Text.Attoparsec (
   double',
+  lexeme,
 ) where
 
 import qualified Data.Attoparsec.Text as A
@@ -19,6 +20,10 @@ import Data.Text            (Text)
 -- for Attoparsec.
 double' :: Parser Double
 double' = A.signed unsignedDouble <?> "double'"
+
+-- | Skip spaces after p
+lexeme :: Parser a -> Parser a
+lexeme p = p <* A.skipSpace
 
 -- * Helpers
 

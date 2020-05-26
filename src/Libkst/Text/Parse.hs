@@ -25,6 +25,7 @@ skipTo
   -> Text -- ^ The string
   -> Text -- ^ Text after prefix
 skipTo pfx = snd . T.breakOn pfx
+{-# INLINE skipTo #-}
 
 -- | Skip after the first instance of prefix, used as a preprocessor
 -- for parsec. Will return 'Nothing' if prefix is not in the string.
@@ -38,6 +39,7 @@ skipAfter
   -> Text       -- ^ The string
   -> Maybe Text -- ^ Text after prefix, or 'Nothing' if prefix not in string
 skipAfter pfx = T.stripPrefix pfx . skipTo pfx
+{-# INLINE skipAfter #-}
 
 -- | Take until the first instance of suffix is found, used as preprocessor for
 -- parsec. Will return @""@ if prefix is not in the string.
@@ -50,6 +52,7 @@ takeUntil
   -> Text -- ^ The string
   -> Text -- ^ Text before suffix
 takeUntil sfx = fst . T.breakOn sfx
+{-# INLINE takeUntil #-}
 
 -- | Obtain the text between two delimiters. If prefix or suffix is not found, returns
 -- 'Nothing'.
@@ -68,6 +71,7 @@ between beg end txt = do
   case T.breakOn end sfx of
     (_, "")  -> Nothing
     (pfx, _) -> return pfx
+{-# INLINEABLE between #-}
 
 -- | The same as 'between' except suffix delimiter is 'Char'. This might
 -- be slightly more efficient than 'between'.
@@ -86,6 +90,7 @@ betweenC beg end txt = do
   case T.break (==end) sfx of
     (_, "")  -> Nothing
     (pfx, _) -> return pfx
+{-# INLINEABLE betweenC #-}
 
 -- | The same as 'between', but if prefix is found but suffix is not found,
 -- returns anything after prefix. Might be slightly more efficient.
@@ -100,6 +105,7 @@ between'
   -> Text       -- ^ The string.
   -> Maybe Text -- ^ Text between begin and end
 between' beg end txt = skipAfter beg txt >>= (return . takeUntil end)
+{-# INLINEABLE between' #-}
 
 -- | The same as 'between'' except suffix delimiter is a character. This might
 -- be slightly more efficient than 'between''.
@@ -114,3 +120,4 @@ betweenC'
   -> Text -- ^ The string.
   -> Maybe Text -- ^ Text between begin and end
 betweenC' beg end txt = skipAfter beg txt >>= (return . T.takeWhile (/=end))
+{-# INLINEABLE betweenC' #-}

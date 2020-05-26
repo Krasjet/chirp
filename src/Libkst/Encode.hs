@@ -12,3 +12,4 @@ encodeBase64
   :: Text -- ^ Text
   -> Text -- ^ Base64 Encoding
 encodeBase64 = T.decodeUtf8 . Base64.encode . T.encodeUtf8
+{-# INLINE encodeBase64 #-}

@@ -12,6 +12,7 @@ whenM
   -> m ()    -- ^ Action
   -> m ()
 whenM condm action = condm >>= flip when action
+{-# INLINE whenM #-}
 
 -- | Either to maybe
 eitherToMaybe
@@ -19,3 +20,4 @@ eitherToMaybe
   -> Maybe a
 eitherToMaybe (Left _)  = Nothing
 eitherToMaybe (Right x) = Just x
+{-# INLINE eitherToMaybe #-}

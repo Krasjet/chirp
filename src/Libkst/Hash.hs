@@ -29,3 +29,4 @@ hashText text =
 -- | The strict version of 'hashText'.
 hashText' :: T.Text -> String
 hashText' = hashText . LT.fromStrict
+{-# INLINE hashText' #-}

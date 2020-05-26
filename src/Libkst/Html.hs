@@ -15,3 +15,4 @@ encodeSVG
   :: SVG  -- ^ SVG picture
   -> Text -- ^ Base64 encoding of image
 encodeSVG svg = "data:image/svg+xml;base64," <> encodeBase64 svg
+{-# INLINE encodeSVG #-}

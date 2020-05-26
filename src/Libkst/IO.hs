@@ -30,6 +30,7 @@ createParentDir
   :: FilePath -- ^ A filename containing path.
   -> IO ()
 createParentDir = createDirectoryIfMissing True . takeDirectory
+{-# INLINEABLE createParentDir #-}
 
 -- | Write text to a file with missing directory handling
 writeFileHandleMissing
@@ -39,6 +40,7 @@ writeFileHandleMissing
 writeFileHandleMissing f t = do
   createParentDir f
   LTIO.writeFile f t
+{-# INLINEABLE writeFileHandleMissing #-}
 
 -- | The strict version of 'writeFileHandleMissing'.
 writeFileHandleMissing'
@@ -48,6 +50,7 @@ writeFileHandleMissing'
 writeFileHandleMissing' f t = do
   createParentDir f
   TIO.writeFile f t
+{-# INLINEABLE writeFileHandleMissing' #-}
 
 -- | The String version of writeFileHandleMissing
 writeFileHandleMissingS
@@ -57,6 +60,7 @@ writeFileHandleMissingS
 writeFileHandleMissingS f t = do
   createParentDir f
   writeFile f t
+{-# INLINEABLE writeFileHandleMissingS #-}
 
 {-
   The following functions comes from
@@ -73,6 +77,7 @@ readProcessWithCWD
 readProcessWithCWD cwd cmd args = Proc.readCreateProcessWithExitCode
   ((Proc.proc cmd args) { Proc.cwd = Just cwd }) ""
   --                                             ^ no stdin
+{-# INLINEABLE readProcessWithCWD #-}
 
 -- | Deep evaluate an action, catch any 'IOException's and convert them to the
 -- 'ExceptT' monad
@@ -81,9 +86,11 @@ tryIODeep
   => IO a                    -- ^ IO action.
   -> ExceptT IOException m a -- ^ Result encapsulated in exception
 tryIODeep = ExceptT . liftIO . try . evaluateDeep
+{-# INLINEABLE tryIODeep #-}
 
 -- | Deep evaluate an IO action, from safe-exceptions
 evaluateDeep :: NFData a => IO a -> IO a
 evaluateDeep action = do
   res <- action
   evaluate $!! res
+{-# INLINEABLE evaluateDeep #-}

@@ -9,6 +9,7 @@ module Libkst.IO (
   -- * Utility
   tryIODeep,
   evaluateDeep,
+  orElseIO,
 ) where
 
 import qualified Data.Text         as T
@@ -18,9 +19,9 @@ import qualified Data.Text.Lazy.IO as LTIO
 import qualified System.Process    as Proc
 
 import Control.DeepSeq            (NFData, ($!!))
-import Control.Exception          (IOException, evaluate, try)
+import Control.Exception          (IOException, catch, evaluate, try)
 import Control.Monad.IO.Class     (MonadIO, liftIO)
-import Control.Monad.Trans.Except (ExceptT (..))
+import Control.Monad.Trans.Except (ExceptT (..), runExceptT)
 import System.Directory           (createDirectoryIfMissing)
 import System.Exit                (ExitCode)
 import System.FilePath            (takeDirectory)
@@ -94,3 +95,17 @@ evaluateDeep action = do
   res <- action
   evaluate $!! res
 {-# INLINEABLE evaluateDeep #-}
+
+-- | Perform action on the left. If failed, run action on the right and handle
+-- any exceptions.
+orElseIO
+  :: IO a           -- ^ IO action that might fail.
+  -> ExceptT e IO a -- ^ If action failed, perform this instead
+  -> ExceptT e IO a
+lft `orElseIO` rgt = ExceptT $ fmap Right lft `catch` handler rgt
+  where
+    handler
+      :: ExceptT e IO a -- ^ action to run instead
+      -> IOException    -- ^ exception from the lft ignored
+      -> IO (Either e a)
+    handler act _ = runExceptT act

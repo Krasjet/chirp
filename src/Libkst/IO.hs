@@ -10,6 +10,7 @@ module Libkst.IO (
   tryIODeep,
   evaluateDeep,
   orElseIO,
+  orElseIO',
 ) where
 
 import qualified Data.Text         as T
@@ -22,6 +23,7 @@ import Control.DeepSeq            (NFData, ($!!))
 import Control.Exception          (IOException, catch, evaluate, try)
 import Control.Monad.IO.Class     (MonadIO, liftIO)
 import Control.Monad.Trans.Except (ExceptT (..), runExceptT)
+import Control.Monad.Trans.Maybe  (MaybeT (..), runMaybeT)
 import System.Directory           (createDirectoryIfMissing)
 import System.Exit                (ExitCode)
 import System.FilePath            (takeDirectory)
@@ -64,7 +66,7 @@ writeFileHandleMissingS f t = do
 {-# INLINEABLE writeFileHandleMissingS #-}
 
 {-
-  The following functions comes from
+  The following functions are adapted from
   [latex-svg](https://github.com/phadej/latex-svg/blob/master/latex-svg-image/src/Image/LaTeX/Render.hs),
   2020 Oleg Grenrus.
 -}
@@ -109,3 +111,17 @@ lft `orElseIO` rgt = ExceptT $ fmap Right lft `catch` handler rgt
       -> IOException    -- ^ exception from the lft ignored
       -> IO (Either e a)
     handler act _ = runExceptT act
+
+-- | Perform IO action on the left. If failed, run action on the right and handle
+-- any exceptions. This version is for the 'MaybeT' monad
+orElseIO'
+  :: IO a         -- ^ IO action that might fail.
+  -> MaybeT IO a  -- ^ If action failed, perform this instead
+  -> MaybeT IO a
+lft `orElseIO'` rgt = MaybeT $ fmap Just lft `catch` handler rgt
+  where
+    handler
+      :: MaybeT IO a -- ^ action to run instead
+      -> IOException    -- ^ exception from the lft ignored
+      -> IO (Maybe a)
+    handler act _ = runMaybeT act

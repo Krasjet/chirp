@@ -1,9 +1,10 @@
 module Libkst.Monad (
   whenM,
+  unlessM,
   eitherToMaybe,
 ) where
 
-import Control.Monad (when)
+import Control.Monad (when, unless)
 
 -- | A monadic version of 'when'.
 whenM
@@ -13,6 +14,15 @@ whenM
   -> m ()
 whenM condm action = condm >>= flip when action
 {-# INLINE whenM #-}
+
+-- | A monadic version of 'unless'.
+unlessM
+  :: Monad m
+  => m Bool  -- ^ Monadic condition
+  -> m ()    -- ^ Action
+  -> m ()
+unlessM condm action = condm >>= flip unless action
+{-# INLINE unlessM #-}
 
 -- | Either to maybe
 eitherToMaybe

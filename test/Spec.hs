@@ -12,6 +12,7 @@ import qualified Test.Tasty           as T
 import Libkst.Hash
 import Libkst.IO
 import Libkst.Monad
+import Libkst.List
 import Libkst.Text.Attoparsec
 import Libkst.Text.Parse
 
@@ -265,17 +266,40 @@ attoSpec = parallel $ do
       leftover (T.pack "test  " ~?> lexeme (A.string "test")) `shouldBe` Nothing
       leftover (T.pack "test" ~?> lexeme (A.string "test")) `shouldBe` Nothing
 
+listSpec :: Spec
+listSpec = parallel $
+  describe "splitWhen" $ do
+    it "splits array based on condition" $ do
+      splitWhen (=='a') "xay" `shouldBe` ["x", "a", "y"]
+      splitWhen (=='a') "xxayy" `shouldBe` ["xx", "a", "yy"]
+      splitWhen (=='a') "xxayyazz" `shouldBe` ["xx", "a", "yy", "a", "zz"]
+
+    it "splits consecutive delimiters" $ do
+      splitWhen (=='a') "xxaayy" `shouldBe` ["xx", "a", "a", "yy"]
+      splitWhen (=='a') "xaaxxaaxyay" `shouldBe` [ "x", "a", "a", "xx", "a"
+                                                 , "a", "xy", "a", "y"
+                                                 ]
+
+    it "does not leave extra [] at end points" $ do
+      splitWhen (=='a') "axa" `shouldBe` ["a", "x", "a"]
+      splitWhen (=='a') "aaxaa" `shouldBe` ["a", "a", "x", "a", "a"]
+      splitWhen (=='a') "xaayxaa" `shouldBe` ["x", "a", "a", "yx", "a", "a"]
+      splitWhen (=='a') "abcdefg" `shouldBe` ["a", "bcdefg"]
+
 main :: IO ()
 main = do
   testHash <- testSpec "Hashing" hashSpec
   testParse <- testSpec "Parsing" parseSpec
   testAtto <- testSpec "Attoparsec" attoSpec
+  testList <- testSpec "List" listSpec
   testIO1 <- testSpec "IO1" ioSpec1
   testIO2 <- testSpec "IO2" ioSpec2
   defaultMain $ testGroup "Tests"
     [ testHash
     , testParse
     , testAtto
+    , testList
     , testIO1
-    , T.after AllFinish "IO1" testIO2 -- can't be run in parallel, TODO switch to MVar instead
+    , T.after AllFinish "IO1" testIO2 -- can't be run in parallel, TODO switch
+                                      -- to MVar instead
     ]

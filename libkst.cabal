@@ -25,6 +25,7 @@ library
       Libkst.Encode
       Libkst.Html
       Libkst.Monad
+      Libkst.List
       Libkst.Text.Parse
       Libkst.Text.Attoparsec
   build-depends:

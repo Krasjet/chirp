@@ -2,6 +2,11 @@ module Libkst.List (
   splitWhen
 ) where
 
+-- | Split list based on predicate.
+--
+-- @
+-- splitWhen (=='a') "axyaxy" == ["a", "xy", "a", "xy"]
+-- @
 splitWhen
   :: (a -> Bool) -- ^ predicate
   -> [a]         -- ^ list to be splitted

@@ -9,12 +9,12 @@ import qualified Data.Text.IO         as TIO
 import qualified Data.Text.Lazy       as LT
 import qualified Test.Tasty           as T
 
-import Libkst.Hash
-import Libkst.IO
-import Libkst.Monad
-import Libkst.List
-import Libkst.Text.Attoparsec
-import Libkst.Text.Parse
+import Chirp.Hash
+import Chirp.IO
+import Chirp.Monad
+import Chirp.List
+import Chirp.Text.Attoparsec
+import Chirp.Text.Parse
 
 import Control.Exception      (bracket_)
 import Control.Monad.IO.Class (liftIO)

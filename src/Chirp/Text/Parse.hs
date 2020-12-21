@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Libkst.Text.Parse (
+module Chirp.Text.Parse (
   skipTo,
   skipAfter,
   takeUntil,

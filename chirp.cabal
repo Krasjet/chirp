@@ -1,15 +1,15 @@
-name:                libkst
+name:                chirp
 version:             0.1.0
 synopsis:
-  Common utility functions for Krasjet.
+  Common utility functions shared by karasu and maze.
 description:
-  Common utility functions for Krasjet.
+  Common utility functions shared by karasu and maze.
 license:             MIT
 license-file:        LICENSE
 author:              Krasjet
 maintainer:          Krasjet
 copyright:           Copyright (c) 2020 Krasjet
-homepage:            https://github.com/Krasjet/libkst
+homepage:            https://github.com/Krasjet/chirp
 category:            Utils
 
 build-type:          Simple
@@ -20,14 +20,14 @@ library
   default-language:    Haskell2010
   ghc-options:         -Wall
   exposed-modules:
-      Libkst.IO
-      Libkst.Hash
-      Libkst.Encode
-      Libkst.Html
-      Libkst.Monad
-      Libkst.List
-      Libkst.Text.Parse
-      Libkst.Text.Attoparsec
+      Chirp.IO
+      Chirp.Hash
+      Chirp.Encode
+      Chirp.Html
+      Chirp.Monad
+      Chirp.List
+      Chirp.Text.Parse
+      Chirp.Text.Attoparsec
   build-depends:
       base               >=4.10 && <4.15
     , attoparsec        ^>=0.13
@@ -41,7 +41,7 @@ library
     , text              ^>=1.2
     , transformers      ^>=0.5
 
-test-suite libkst-test
+test-suite chirp-test
   hs-source-dirs:      test
   default-language:    Haskell2010
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N -Wall
@@ -49,7 +49,7 @@ test-suite libkst-test
   main-is:             Spec.hs
   build-depends:
       base               >=4.10 && <4.15
-    , libkst
+    , chirp
     , tasty             ^>=1.2
     , tasty-hspec       ^>=1.1
     , text              ^>=1.2

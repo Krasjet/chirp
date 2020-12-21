@@ -1,4 +1,4 @@
-module Libkst.IO (
+module Chirp.IO (
   -- * FileIO
   createParentDir,
   writeFileHandleMissing,

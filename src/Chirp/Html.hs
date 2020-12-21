@@ -1,12 +1,12 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Libkst.Html (
+module Chirp.Html (
   SVG,
   encodeSVG,
 ) where
 
 import Data.Text     (Text)
-import Libkst.Encode
+import Chirp.Encode
 
 type SVG = Text
 

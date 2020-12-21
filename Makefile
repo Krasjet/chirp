@@ -18,4 +18,4 @@ ghcid:
 		--test "main"
 
 doc:
-	@stack haddock --open libkst
+	@stack haddock --open chirp

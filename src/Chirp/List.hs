@@ -1,4 +1,4 @@
-module Libkst.List (
+module Chirp.List (
   splitWhen
 ) where
 

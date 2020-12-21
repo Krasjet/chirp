@@ -1,4 +1,4 @@
-module Libkst.Encode (
+module Chirp.Encode (
   encodeBase64,
 ) where
 

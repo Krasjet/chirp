@@ -1,4 +1,4 @@
-module Libkst.Monad (
+module Chirp.Monad (
   whenM,
   unlessM,
   eitherToMaybe,

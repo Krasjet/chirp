@@ -1,6 +1,6 @@
 {-# LANGUAGE BangPatterns      #-}
 {-# LANGUAGE OverloadedStrings #-}
-module Libkst.Text.Attoparsec (
+module Chirp.Text.Attoparsec (
   double',
   lexeme,
 ) where

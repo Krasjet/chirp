@@ -1,4 +1,4 @@
-module Libkst.Hash (
+module Chirp.Hash (
   hashText,
   hashText'
 ) where
